@@ -3,41 +3,48 @@ package env
 import (
 	"os"
 	"strconv"
+	"time"
 )
 
-func GetString(key, fallback string) string {
-	val, ok := os.LookupEnv(key)
-	if !ok {
-		return fallback
+func GetEnv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
 	}
+	return fallback
+}
 
-	return val
+func GetDuration(key string, fallback time.Duration) time.Duration {
+	if v := os.Getenv(key); v != "" {
+		if d, err := time.ParseDuration(v); err == nil {
+			return d
+		}
+	}
+	return fallback
 }
 
 func GetInt(key string, fallback int) int {
-	val, ok := os.LookupEnv(key)
-	if !ok {
-		return fallback
+	if v := os.Getenv(key); v != "" {
+		if i, err := strconv.Atoi(v); err == nil {
+			return i
+		}
 	}
+	return fallback
+}
 
-	valAsInt, err := strconv.Atoi(val)
-	if err != nil {
-		return fallback
+func GetFloat(key string, fallback float64) float64 {
+	if v := os.Getenv(key); v != "" {
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			return f
+		}
 	}
-
-	return valAsInt
+	return fallback
 }
 
 func GetBool(key string, fallback bool) bool {
-	val, ok := os.LookupEnv(key)
-	if !ok {
-		return fallback
+	if v := os.Getenv(key); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
+			return b
+		}
 	}
-
-	boolVal, err := strconv.ParseBool(val)
-	if err != nil {
-		return fallback
-	}
-
-	return boolVal
+	return fallback
 }
